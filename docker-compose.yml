@@ -1,0 +1,21 @@
+version: '3'
+services:
+  blueprint-backend:
+    image: blueprint-backend
+    ports:
+    - 3000:3000
+    env_file:
+    - .env
+    command: bash -c 'while !</dev/tcp/database/5432; do sleep 1; done; yarn start'
+    depends_on:
+    - database
+    build: ./
+    volumes:
+    - ./src:/app/src
+    - ./migrations:/app/migrations
+  database:
+    image: postgres:latest
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=postgres
